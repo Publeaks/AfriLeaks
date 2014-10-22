@@ -105,11 +105,11 @@ module.exports = function(grunt) {
   }
 
   var agent = superagent.agent(),
-    baseurl = 'http://www.transifex.com/api/2/project/publeaks',
+    baseurl = 'http://www.transifex.com/api/2/project/afrileaks',
     sourceFile = 'pot/en.po';
 
   function fetchTxSource(cb){
-    var url = baseurl + '/resource/publeaks/content',
+    var url = baseurl + '/resource/afrileaks/content',
       login = readTransifexrc();
 
     agent.get(url)
@@ -123,7 +123,7 @@ module.exports = function(grunt) {
   }
 
   function updateTxSource(cb){
-    var url = baseurl + '/resource/publeaks/content/',
+    var url = baseurl + '/resource/afrileaks/content/',
       content = grunt.file.read(sourceFile),
       login = readTransifexrc();
 
@@ -138,7 +138,7 @@ module.exports = function(grunt) {
   }
 
   function listLanguages(cb){
-    var url = baseurl + '/resource/publeaks/?details',
+    var url = baseurl + '/resource/afrileaks/?details',
       login = readTransifexrc();
 
     agent.get(url)
@@ -151,7 +151,7 @@ module.exports = function(grunt) {
   }
 
   function fetchTxTranslationsForLanguage(langCode, cb) {
-    var resourceUrl = baseurl + '/resource/publeaks/',
+    var resourceUrl = baseurl + '/resource/afrileaks/',
       login = readTransifexrc();
 
     agent.get(resourceUrl + 'stats/' + langCode + '/')

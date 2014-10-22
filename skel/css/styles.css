@@ -55,7 +55,7 @@ h3 {
     font-family: "BebasNeueRegular", "Lucida Console", Monaco, monospace;
     font-size: 36px;
     font-weight: normal;
-    color: #00DFB3;
+    color: #008757;
     text-transform: uppercase;
 }
 
@@ -129,7 +129,7 @@ a, a:hover, a:focus, a:active, a:visited {
 }
 
 a:hover, a:focus, a:active, #mainnav a:hover {
-    color: #0D8FDB;
+    color: #008757;
 }
 
 #mainnav {
@@ -158,9 +158,10 @@ a:hover, a:focus, a:active, #mainnav a:hover {
 }
 
 #footer a, #footer a:focus, #footer a:active, #footer a:visited {
-    color: #00DFB3;
+    color: #008757;
     cursor: pointer;
     text-decoration: none;
+    text-width: bold;
 }
 
 #footer a:hover {
@@ -175,31 +176,34 @@ a:hover, a:focus, a:active, #mainnav a:hover {
     margin-bottom: 40px;
 }
 
+#content {
+   margin-top: 100px;
+}
+
 #initiative-logo {
     position: relative;
+    top: -20px;
     left: -20px;
     z-index: 0;
 }
 
 #initiative-tagline {
     position: relative;
-    top: 164px;
-    left: 120px;
+    top: 180px;
+    left: 40px;
+    width: 200px;
     font-size: 18px;
     display: block;
     background-color: #fff;
     font-weight: normal;
     z-index: 1;
-    padding-left: 30px;
-    padding-right: 30px;
-    width: 300px;
 }
 
 a.globaleaksbtn {
     font-family: "BebasNeueRegular", "Lucida Console", Monaco, monospace;
     display: inline-block;
     font-weight: normal;
-    color: #00DFB3;
+    color: #ed0432;
     background-color: #000;
     font-size: 42px;
     padding: 16px 20px 10px 20px;
@@ -230,7 +234,7 @@ a.globaleaksbtn:hover {
 #pagetitle {
     font-family: "BebasNeueRegular", "Lucida Console", Monaco, monospace;
     font-size: 40px;
-    color: #00DFB3;
+    color: #008757;
 }
 
 .twitter {
