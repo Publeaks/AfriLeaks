@@ -41,7 +41,8 @@ module.exports = function(grunt) {
           'build/contact.html': ['skel/partials/header.html', 'skel/pages/contact.html', 'skel/partials/footer.html' ],
           'build/security.html': ['skel/partials/header.html', 'skel/pages/security.html', 'skel/partials/footer.html' ],
           'build/technology.html': ['skel/partials/header.html', 'skel/pages/technology.html', 'skel/partials/footer.html' ],
-          'build/press.html': ['skel/partials/header.html', 'skel/pages/press.html', 'skel/partials/footer.html' ]
+          'build/press.html': ['skel/partials/header.html', 'skel/pages/press.html', 'skel/partials/footer.html' ],
+          'build/platform.html': ['skel/partials/header.html', 'skel/pages/platform.html', 'skel/partials/footer.html' ]
         },
       },
     },
