@@ -1,13 +1,29 @@
-# Publeaks
+# AfriLeaks
 
-This projects serves as a skeleton for the informative website of [Publeaks](https://www.publeaks.org) like initatives based [GlobaLeaks](https://www.globaleaks.org).
+This project is a fork of [Publeaks](https://github.com/Publeaks/Publeaks).
 
-The project internationalized in multiple languages thanks to [Transifex](https://www.transifex.com/projects/p/publeaks/).
-- https://www.transifex.com/projects/p/publeaks/
+The project is internationalized in multiple languages thanks to [Transifex](https://www.transifex.com/projects/p/afrileaks/).
+- https://www.transifex.com/projects/p/afrileaks/
 
 More information can be found at:
 - [Publeaks Website](https://www.publeaks.org)
 - [GlobaLeaks Website](https://www.globaleaks.org)
+
+# How does this package work?
+
+Install dependencies with:
+  npm install -d
+
+Build en version with:
+  grunt build
+
+Build localized version with:
+  grunt build --language langcode
+
+  e.g.: grunt build --language fr
+
+Result of the build can be found in directories build_langcode
+  e.g.: fr build will be in build_fr directory
 
 ## License
 Copyright (C) 2014 Hermes No Profit Association - GlobaLeaks Project

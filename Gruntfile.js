@@ -1,5 +1,20 @@
 module.exports = function(grunt) {
   'use strict';
+
+  var proj = 'afrileaks';
+
+  var lang = grunt.option('language');
+  if (lang == undefined || lang == '') {
+    lang = 'en';
+  }
+
+  var localized_build = 'build_' + lang + '/';
+
+  var path = require('path'),
+    superagent = require('superagent'),
+    fs = require('fs'),
+    Gettext = require("node-gettext")
+
   //
   // Grunt configuration:
   //
@@ -21,7 +36,7 @@ module.exports = function(grunt) {
     },
 
     clean: {
-      release: ['tmp', 'build']
+      release: ['tmp', 'build*']
     },
 
     copy: {
@@ -41,24 +56,26 @@ module.exports = function(grunt) {
           'build/contact.html': ['skel/partials/header.html', 'skel/pages/contact.html', 'skel/partials/footer.html' ],
           'build/security.html': ['skel/partials/header.html', 'skel/pages/security.html', 'skel/partials/footer.html' ],
           'build/technology.html': ['skel/partials/header.html', 'skel/pages/technology.html', 'skel/partials/footer.html' ],
-          'build/press.html': ['skel/partials/header.html', 'skel/pages/press.html', 'skel/partials/footer.html' ],
-          'build/platform.html': ['skel/partials/header.html', 'skel/pages/platform.html', 'skel/partials/footer.html' ]
+          'build/press.html': ['skel/partials/header.html', 'skel/pages/press.html', 'skel/partials/footer.html' ]
         },
       },
     },
 
     html: {
       files: ['**/*.html']
+    },
+
+    replace: {
+      antani: {
+        src: [ 'build/*.html'],
+        dest: localized_build,
+        replacements: []
+      }
     }
 
   });
 
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
-
-  var path = require('path'),
-    superagent = require('superagent'),
-    fs = require('fs'),
-    Gettext = require("node-gettext")
 
   grunt.registerTask('cleanupWorkingDirectory', function() {
 
@@ -74,15 +91,83 @@ module.exports = function(grunt) {
       fs.rmdirSync(dir);
     };
 
+    rm_rf('tmp');
+    rm_rf('build');
+
+  });
+
+  grunt.registerTask('localizedBuild', function(){
+    var done = this.async();
+
+    var gt = new Gettext(),
+      strings,
+      fileContents = fs.readFileSync("pot/en.po");
+
+    var replacements = [];
+
     grunt.file.mkdir('build/');
 
     grunt.file.recurse('tmp', function(absdir, rootdir, subdir, filename) {
       grunt.file.copy(absdir, path.join('build/', subdir || '', filename || ''));
     });
 
-    rm_rf('tmp');
+    fetchTxTranslations(function(supported_languages){
 
+      gt.addTextdomain("en", fileContents);
+      strings = gt.listKeys("en", "");
+
+      if (lang in supported_languages) {
+        gt.addTextdomain(lang, fs.readFileSync("pot/" + lang + ".po"));
+
+        strings.forEach(function(string){
+
+          replacements.push({
+            from: string,
+            to: gt.dgettext(lang, string)
+          });
+
+        });
+
+        // remove of data-translate directive simply used for pushing strings
+        replacements.push({
+          from: ' data-translate',
+          to: '',
+        });
+
+        grunt.file.mkdir(localized_build);
+
+        grunt.config.set('replace.antani.replacements', replacements);
+
+        grunt.task.run('replace');
+
+        grunt.file.recurse('build', function(absdir, rootdir, subdir, filename) {
+          grunt.file.copy(absdir, path.join(localized_build, subdir || '', filename || ''));
+        });
+
+        console.log('Written ' + lang + 'template inside build_' + lang + ' directory.');
+
+        done();
+
+      } else {
+        console.log('Cannot write ' + lang + 'template; missing translation.');
+      }
+
+    });
   });
+
+  function str_escape (val) {
+      if (typeof(val)!="string") return val;
+      return val
+        .replace(/[\n]/g, '\\n')
+        .replace(/[\t]/g, '\\r');
+  }
+
+  function str_unescape (val) {
+      if (typeof(val)!="string") return val;
+      return val
+        .replace(/\\n/g, '\n')
+        .replace(/\\t/g, '\t');
+  }
 
   function readTransifexrc(){
     var transifexrc = fs.realpathSync(process.env.HOME + '/.transifexrc'),
@@ -106,11 +191,11 @@ module.exports = function(grunt) {
   }
 
   var agent = superagent.agent(),
-    baseurl = 'http://www.transifex.com/api/2/project/afrileaks',
+    baseurl = 'http://www.transifex.com/api/2/project/' + proj,
     sourceFile = 'pot/en.po';
 
   function fetchTxSource(cb){
-    var url = baseurl + '/resource/afrileaks/content',
+    var url = baseurl + '/resource/' + proj + '/content',
       login = readTransifexrc();
 
     agent.get(url)
@@ -124,7 +209,7 @@ module.exports = function(grunt) {
   }
 
   function updateTxSource(cb){
-    var url = baseurl + '/resource/afrileaks/content/',
+    var url = baseurl + '/resource/' + proj + '/content/',
       content = grunt.file.read(sourceFile),
       login = readTransifexrc();
 
@@ -139,7 +224,7 @@ module.exports = function(grunt) {
   }
 
   function listLanguages(cb){
-    var url = baseurl + '/resource/afrileaks/?details',
+    var url = baseurl + '/resource/' + proj + '/?details',
       login = readTransifexrc();
 
     agent.get(url)
@@ -152,7 +237,7 @@ module.exports = function(grunt) {
   }
 
   function fetchTxTranslationsForLanguage(langCode, cb) {
-    var resourceUrl = baseurl + '/resource/afrileaks/',
+    var resourceUrl = baseurl + '/resource/' + proj + '/',
       login = readTransifexrc();
 
     agent.get(resourceUrl + 'stats/' + langCode + '/')
@@ -281,5 +366,5 @@ module.exports = function(grunt) {
   grunt.registerTask('updateTranslations', ['updateTranslationsSource']);
 
   // Run this to build your app. You should have run updateTranslations before you do so, if you have changed something in your translations.
-  grunt.registerTask('build', ['clean', 'copy', 'concat', 'manifest', 'cleanupWorkingDirectory']);
+  grunt.registerTask('build', ['clean', 'copy', 'concat', 'manifest', 'localizedBuild', 'cleanupWorkingDirectory']);
 };
